@@ -8,12 +8,15 @@
 Expected
 
 ;list of the different operators that can be used in the game.
-(define ops (list '+ '* '- '/))
-
+(define ops (list + * - /))
 (define numPerm (permutations posList))
-(define combined(append ops (list numPerm)))
-;(append-map combined numPerm)
+(define opsCart( cartesian-product ops ops ops ops ops))
+;This makes a new list of the possible cobinations of numbers and operators 
+(define flatList(map flatten(cartesian-product numPerm opsCart)))
 
+
+;(define combined(append '(list) '(list)))
+;(define testing(map combined(numPerm test) ))
 
 ;This our original list to create reverse polish notation -1 will represent operators
 ;and 1 will represent numbers. It doesnt have two -1's and one 1 because for valid
@@ -49,5 +52,6 @@ Expected
 (define validList(map valid-rpn? permList))
 
 (filter identity validList)
+
 
 
