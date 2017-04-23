@@ -8,19 +8,11 @@
 Expected
 
 ;list of the different operators that can be used in the game.
-(define ops (list + * - /))
-(define numPerm (permutations posList))
-(define opsCart( cartesian-product ops ops ops ops ops))
-;This makes a new list of the possible cobinations of numbers and operators 
-(define flatList(map flatten(cartesian-product numPerm opsCart)))
+(define ops (list '+ '* '- '/))
 
-
-;(define combined(append '(list) '(list)))
-;(define testing(map combined(numPerm test) ))
-
-;This our original list to create reverse polish notation -1 will represent operators
-;and 1 will represent numbers. It doesnt have two -1's and one 1 because for valid
-;reverse polish notaion it needs to start with two nummbers and end with an operator
+;This our original list to create reverse polish notation 1 will represent operators
+;and -1 will represent numbers. It doesnt have two -1's and one 1 at the end because
+;for valid reverse polish notaion it needs to start with two nummbers and end with an operator
 (define start-perm (list -1 -1 -1 -1 1 1 1 1))
 
 ;This line creates all permutations of the original RPN list and it removes the duplicates 
@@ -50,8 +42,36 @@ Expected
           )))
 ;defines valid list which will be populated with the valid rpns
 (define validList(map valid-rpn? permList))
+;this filters out the #f from the list 
+(define filteredList(filter identity validList))
+; this is used in a later function to pop numbers of a list 
+(define (removeDups li test)
+      remove '(li) test)
+;This funtion takes two lists and has a stack to add values onto
+(define (numSort li rpnType [stack'()])
+  ;if the list is null do the first if not do the second 
+  (if (null? li )
+         stack
+         ;if the value of rpn type is 1 then we do the first statment which appends the 
+          (if(equal? rpnType 1)
+             (if(pair? (flatten(car li)))
+                (numSort (cdr li) rpnType (append (popOff li stack)stack))
+                (numSort (cdr li) rpnType (append (cartesian-product (list(car li))(remove (car li) posList))stack)))
+  (numSort (cdr li) rpnType (append (cartesian-product (list(flatten(car li)))ops)stack))))) 
 
-(filter identity validList)
+(define (popOff li vals)
+(define nums(flatten(car li)))
+(define removeNums (removeDups nums posList))
+(define cartNums (cartesian-product (list( car li))removeNums))cartNums)
 
+(define (generateRpn valid [stack'()])
+  (define li posList)
+  (if (null? valid)
+          #t ;replace this with a function 
+          (if (empty? stack)
+          (generateRpn (cdr (cdr valid))(numSort li (car valid))) 
+          (generateRpn (cdr valid)(numSort stack(car valid)))))) 
+          
 
+(define test(generateRpn (list 1 1 1 1 1 1 1 1 1 1 1) ))
 
