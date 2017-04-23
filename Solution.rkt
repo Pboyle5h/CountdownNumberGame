@@ -1,4 +1,5 @@
 #lang racket
+;Author: Pauri Boyle G00316554
 ;list of numbers to use to try get to the expected number 
 (define posList(list 2 3 10 25 50 100))
 
@@ -46,6 +47,9 @@ Expected
 (define filteredList(filter identity validList))
 
 ;https://rosettacode.org/wiki/Parsing/RPN_calculator_algorithm#Racket
+;This function was taken exactly as is from the above URL it hasnt been implemented
+;due to time contraits and problems encountered it was meant to be addapted to take
+;the resulting valid RPN and give me answers where i would then check to see if they're right 
 (define (calculate-RPN expr)
   (for/fold ([stack '()]) ([token expr])
     (printf "~a\t -> ~a~N" token stack)
@@ -63,6 +67,9 @@ Expected
 (define (removeDups li test)
       remove '(li) test)
 ;This funtion takes two lists and has a stack to add values onto
+;This function is used to change -1's to numbers and 1 to operators
+;it is done by going through each element of li popping it off and adding it to the stack
+;creating a cartesian product of each value 
 (define (numSort li rpnType [stack'()])
   ;if the list is null do the first if not do the second 
   (if (null? li )
@@ -73,20 +80,24 @@ Expected
                 (numSort (cdr li) rpnType (append (popOff li stack)stack))
                 (numSort (cdr li) rpnType (append (cartesian-product (list(car li))(remove (car li) posList))stack)))
   (numSort (cdr li) rpnType (append (cartesian-product (list(flatten(car li)))ops)stack))))) 
-
+;These functions are called to remove any or the numbers so that they are only used once 
 (define (popOff li vals)
 (define nums(flatten(car li)))
 (define removeNums (removeDups nums posList))
 (define cartNums (cartesian-product (list( car li))removeNums))cartNums)
 
+;This function takes the list of 1's and -1's 
 (define (generateRpn valid [stack'()])
-  (define li posList)
+  ;if the list is null 
   (if (null? valid)
-          #t ;replace this with a function 
+          #t ;replace this with a function
+          ;if stack is empty do the first one which send the posList the first 1 or -1 
           (if (empty? stack)
-          (generateRpn (cdr (cdr valid))(numSort li (car valid))) 
+           ;recursevaly calling it self to go through all possibilities
+          (generateRpn (cdr (cdr valid))(numSort posList (car valid))) 
           (generateRpn (cdr valid)(numSort stack(car valid)))))) 
           
-
-(define test(generateRpn (list 1 1 1 1 1 1 1 1 1 1 1) ))
+;passing in a sigular list to check to see where i was going wrong
+;ideally I would prefer to have this using map with the filtered list
+(define test(generateRpn (list -1 -1 1 -1 1 -1 1 1 -1 -1 1) ))
 
